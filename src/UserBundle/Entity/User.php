@@ -38,7 +38,7 @@ class User
     /**
      * @var integer
      *
-     * @ORM\Column(name="type", type="integer", length=255)
+     * @ORM\Column(name="type", type="integer", length=255, nullable=true)
      */
     private $type;
 
