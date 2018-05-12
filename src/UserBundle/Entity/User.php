@@ -3,6 +3,7 @@
 namespace UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -24,6 +25,7 @@ class User
     /**
      * @var string
      *
+     * @Assert\Length(min=5)
      * @ORM\Column(name="pseudo", type="string", length=150, unique=true)
      */
     private $pseudo;
@@ -31,6 +33,7 @@ class User
     /**
      * @var string
      *
+     * @Assert\Length(min=6)
      * @ORM\Column(name="password", type="string", length=255)
      */
     private $password;
