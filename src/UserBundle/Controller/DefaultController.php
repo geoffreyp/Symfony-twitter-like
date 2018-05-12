@@ -4,6 +4,13 @@ namespace UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use UserBundle\Entity\User;
@@ -20,30 +27,41 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/add")
+     * @Route("/create")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function addAction(Request $request)
     {
-        // Reste de la méthode qu'on avait déjà écrit
+        $user = new User();
+
+        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $user);
+        $formBuilder
+            ->add('pseudo',      TextType::class)
+            ->add('password',    PasswordType::class)
+            ->add('save',      SubmitType::class)
+        ;
+
+        $form = $formBuilder->getForm();
+
         if ($request->isMethod('POST')) {
-            $pseudo = $request->query->get("pseudo");
-            $mdp = $request->query->get("password");
-            $user = new User();
-            $user->setPseudo($pseudo);
-            $user->setPassword(md5($mdp));
 
-            // TODO WIP 
+            $form->handleRequest($request);
 
-            $request->getSession()->getFlashBag()->add('notice', 'Votre compte est correctement créé');
+            if ($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($user);
+                $em->flush();
 
-            // Puis on redirige vers la page de visualisation de cettte annonce
-            return $this->redirectToRoute('user_index', array('id' => $user->getId()));
+                $request->getSession()->getFlashBag()->add('notice', 'Votre compte est correctement créé');
+
+                return $this->redirectToRoute('user_index', array('id' => $user->getId()));
+            }
         }
 
-
-        return $this->render('@User/Default/inscription.html.twig');
+        return $this->render('@User/Default/inscription.html.twig', array(
+            'form' => $form->createView(),
+        ));
     }
 }
 
