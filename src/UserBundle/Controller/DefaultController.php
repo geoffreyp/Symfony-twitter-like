@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use UserBundle\Entity\User;
+use UserBundle\Form\UserType;
 
 class DefaultController extends Controller
 {
@@ -35,28 +36,18 @@ class DefaultController extends Controller
     {
         $user = new User();
 
-        $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $user);
-        $formBuilder
-            ->add('pseudo',      TextType::class)
-            ->add('password',    PasswordType::class)
-            ->add('save',      SubmitType::class)
-        ;
+        $form = $this->createForm(UserType::class, $user);
 
-        $form = $formBuilder->getForm();
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
-        if ($request->isMethod('POST')) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
 
-            $form->handleRequest($request);
+            $request->getSession()->getFlashBag()->add('notice', 'Votre compte est correctement créé');
 
-            if ($form->isValid()) {
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($user);
-                $em->flush();
+            return $this->redirectToRoute('user_index', array('id' => $user->getId()));
 
-                $request->getSession()->getFlashBag()->add('notice', 'Votre compte est correctement créé');
-
-                return $this->redirectToRoute('user_index', array('id' => $user->getId()));
-            }
         }
 
         return $this->render('@User/Default/inscription.html.twig', array(
