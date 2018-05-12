@@ -4,6 +4,7 @@ namespace UserBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 use UserBundle\Entity\User;
 use UserBundle\Form\UserType;
@@ -13,6 +14,7 @@ class DefaultController extends Controller
     /**
      * @Route("/", name="user_index")
      * @return \Symfony\Component\HttpFoundation\Response
+     * @Security("has_role('ROLE_USER')")
      */
     public function indexAction()
     {
@@ -23,6 +25,7 @@ class DefaultController extends Controller
      * @Route("/create")
      * @param Request $request
      * @return \Symfony\Component\HttpFoundation\Response
+     *
      */
     public function addAction(Request $request)
     {
@@ -33,6 +36,8 @@ class DefaultController extends Controller
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
+            $user->setSalt(date("Y-m-d_H:i:s"));
+            $user->setRoles(array('ROLE_USER'));
             $em->persist($user);
             $em->flush();
 

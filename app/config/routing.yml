@@ -6,3 +6,14 @@ user:
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
+
+login:
+    path: /login
+    defaults:
+        _controller: UserBundle:Security:login
+
+login_check:
+    path: /login_check
+
+logout:
+    path: /logout
