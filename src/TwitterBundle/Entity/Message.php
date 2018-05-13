@@ -3,6 +3,7 @@
 namespace TwitterBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Form\AbstractType;
 
 /**
  * Message
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="message")
  * @ORM\Entity(repositoryClass="TwitterBundle\Repository\MessageRepository")
  */
-class Message
+class Message extends AbstractType
 {
     /**
      * @var int
