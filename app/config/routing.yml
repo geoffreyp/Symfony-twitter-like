@@ -3,10 +3,6 @@ twitter:
     type:     annotation
     prefix:   /message
 
-user:
-    resource: "@UserBundle/Controller/"
-    type:     annotation
-    prefix:   /account
 
 app:
     resource: '@AppBundle/Controller/'
