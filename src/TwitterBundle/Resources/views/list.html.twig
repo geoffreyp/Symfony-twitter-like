@@ -1,0 +1,6 @@
+<h1>List messages</h1>
+<ul>
+{% for mess in messages %}
+    <li>{{ mess.createdAt |date('Y-m-d') }} - {{ mess.text }}</li>
+{% endfor %}
+</ul>

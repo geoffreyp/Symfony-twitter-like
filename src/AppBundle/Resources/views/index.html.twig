@@ -7,4 +7,16 @@
         {{ form(message_form, {action:path('create_form')}) }}
     </div>
 
+    <div class="last-messages">
+
+    </div>
+
+    <script type="application/javascript">
+        $(document).ready(function () {
+            $.get( "{{ path('list_message') }}", { limit: "10" }, function( data ) {
+                $( ".last-messages" ).html( data );
+            });
+        })
+    </script>
+
 {% endblock %}

@@ -22,8 +22,9 @@ class FormController extends Controller
         $form = $this->createForm(MessageType::class, $message);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $user = $this->getUser();
             $message->setCreatedAt(new \DateTime());
-            $message->setUser($request->getUser());
+            $message->setUser($user);
             $em = $this->getDoctrine()->getManager();
             $em->persist($message);
             $em->flush();
@@ -31,4 +32,20 @@ class FormController extends Controller
         }
         return $this->redirectToRoute('homepage');
     }
+
+    /**
+     * @Route("/list", name="list_message")
+     * @param Request $request
+     * @return Response
+     */
+    public function listAction(Request $request)
+    {
+        $repository = $this->getDoctrine()->getRepository(Message::class);
+        $limit = $request->get("limit");
+
+        $messages = $repository->findBy(array(),  array('createdAt' => 'DESC'), $limit);
+
+        return $this->render("@Twitter/list.html.twig", array("messages" => $messages));
+    }
+
 }
